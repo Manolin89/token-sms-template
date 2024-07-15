@@ -64,21 +64,21 @@ func (a *api) VerifyToken(w http.ResponseWriter, r *http.Request) {
 
 func (a *api) ReceivedMessages(w http.ResponseWriter, r *http.Request) {
 
-	if r.Body != nil {
-		log.Printf("Leer mensaje recivido")
-		var messageReceivedJson ReceivedDataMessage
-		err := json.NewDecoder(r.Body).Decode(&messageReceivedJson)
-		log.Printf("mensaje recivido: %v", messageReceivedJson)
+	log.Printf("Leer mensaje recivido")
+	var messageReceivedJson ReceivedDataMessage
+	err := json.NewDecoder(r.Body).Decode(&messageReceivedJson)
+	log.Printf("mensaje recivido: %v", messageReceivedJson)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		err := json.NewEncoder(w).Encode("error to received message information receivd")
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Header().Set("Content-Type", "application/json")
-			err := json.NewEncoder(w).Encode("error to received message information receivd")
-			if err != nil {
-				return
-			}
 			return
 		}
+		return
+	}
 
+	if messageReceivedJson.NombreCliente != "" && messageReceivedJson.Token != "" && messageReceivedJson.Telefono != "" {
 		log.Printf("Construir mensaje de primer contacto")
 		parameter := []Parameters{
 			{
