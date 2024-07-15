@@ -64,54 +64,56 @@ func (a *api) VerifyToken(w http.ResponseWriter, r *http.Request) {
 
 func (a *api) ReceivedMessages(w http.ResponseWriter, r *http.Request) {
 
-	log.Printf("Leer mensaje recivido")
-	var messageReceivedJson ReceivedDataMessage
-	err := json.NewDecoder(r.Body).Decode(&messageReceivedJson)
-	log.Printf("mensaje recivido: %v", messageReceivedJson)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Header().Set("Content-Type", "application/json")
-		err := json.NewEncoder(w).Encode("error to received message information receivd")
+	if r.Body != nil {
+		log.Printf("Leer mensaje recivido")
+		var messageReceivedJson ReceivedDataMessage
+		err := json.NewDecoder(r.Body).Decode(&messageReceivedJson)
+		log.Printf("mensaje recivido: %v", messageReceivedJson)
 		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Header().Set("Content-Type", "application/json")
+			err := json.NewEncoder(w).Encode("error to received message information receivd")
+			if err != nil {
+				return
+			}
 			return
 		}
-		return
-	}
 
-	log.Printf("Construir mensaje de primer contacto")
-	parameter := []Parameters{
-		{
-			Type: "text",
-			Text: messageReceivedJson.NombreCliente,
-		},
-		{
-			Type: "text",
-			Text: messageReceivedJson.Token,
-		},
-	}
-	components := []Components{
-		{
-			Type:       "body",
-			Parameters: parameter,
-		},
-	}
-	languaje := Language{
-		Code: "es_MX",
-	}
-	template := Template{
-		Name:       "account_confirm",
-		Language:   languaje,
-		Components: components,
-	}
-	dataSendingToken := DataSendingToken{
-		MessagingProduct: "whatsapp",
-		RecipientType:    "individual",
-		To:               messageReceivedJson.Telefono,
-		Type:             "template",
-		Template:         template,
-	}
+		log.Printf("Construir mensaje de primer contacto")
+		parameter := []Parameters{
+			{
+				Type: "text",
+				Text: messageReceivedJson.NombreCliente,
+			},
+			{
+				Type: "text",
+				Text: messageReceivedJson.Token,
+			},
+		}
+		components := []Components{
+			{
+				Type:       "body",
+				Parameters: parameter,
+			},
+		}
+		languaje := Language{
+			Code: "es_MX",
+		}
+		template := Template{
+			Name:       "account_confirm",
+			Language:   languaje,
+			Components: components,
+		}
+		dataSendingToken := DataSendingToken{
+			MessagingProduct: "whatsapp",
+			RecipientType:    "individual",
+			To:               messageReceivedJson.Telefono,
+			Type:             "template",
+			Template:         template,
+		}
 
-	SendMessage(w, r, dataSendingToken)
+		SendMessage(w, r, dataSendingToken)
+	}
 
 }
 
