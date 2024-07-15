@@ -1,16 +1,5 @@
 package main
 
-type DataSendingText struct {
-	MessagingProduct string `json:"messaging_product"`
-	RecipientType    string `json:"recipient_type"`
-	To               string `json:"to"`
-	Type             string `json:"type"`
-	Text             struct {
-		PreviewUrl bool   `json:"preview_url"`
-		Body       string `json:"body"`
-	} `json:"text"`
-}
-
 type DataSendingToken struct {
 	MessagingProduct string   `json:"messaging_product"`
 	RecipientType    string   `json:"recipient_type"`
@@ -21,7 +10,7 @@ type DataSendingToken struct {
 
 type Template struct {
 	Name       string       `json:"name"`
-	Language   Language     `json:"template"`
+	Language   Language     `json:"language"`
 	Components []Components `json:"components"`
 }
 
