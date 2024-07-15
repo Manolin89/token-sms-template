@@ -96,7 +96,7 @@ func (a *api) ReceivedMessages(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	languaje := Language{
-		Code: "es_ES",
+		Code: "es_MX",
 	}
 	template := Template{
 		Name:       "account_confirm",
